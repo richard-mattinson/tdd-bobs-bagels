@@ -1,21 +1,25 @@
-/* ## User Stories
-
-```
-Part 1-1
+/*
+Part 3-2
 As a member of the public
-So I can order a bagel when I want to
-I'd like to add an item to my basket
+So that I can buy many of my favorite bagel
+I'd like to be able to add the same type of bagel to my basket more than once
 
-Part 1-2
+Part 3-3
 As a member of the public,
-So that I can change my order
-I'd like to remove an item from my basket */
+So that I can prepare to pay
+When I go to checkout I'd like to know the total sum of the bagels in my basket
+
+*/
 
 // TEST CODE
 const Basket = require('../src/basket.js')
 
 describe('Basket', () => {
-  it('adds an item in the basket', () => {
+  /* Part 1-1 DONE
+  As a member of the public
+  So I can order a bagel when I want to
+  I'd like to add an item to my basket */
+  it('Customer - adds an item to the basket', () => {
     // Add item is an Array due to the [], the {} inside are Objects
     const basket = new Basket()
     const itemToAdd = [
@@ -46,19 +50,24 @@ describe('Basket', () => {
     expect(updatedBasket).toEqual(expectedResult)
   })
 
-  it("doesn't add item if null", () => {
+  it("Customer - doesn't add item if there is no item", () => {
     const basket = new Basket()
-    const expectedResult = null
+    const expectedResult = []
     // execute
     const updatedBasket = basket.addToBasket()
     // verify
     expect(updatedBasket).toEqual(expectedResult)
   })
 
-  it('remove an item from the basket', () => {
+  /* Part 1-2 DONE
+  As a member of the public,
+  So that I can change my order
+  I'd like to remove an item from my basket */
+  it('Customer - remove an item from the basket', () => {
     const basket = new Basket()
-    const itemToAdd = [
-      ({
+
+    const itemsToAdd = [
+      {
         name: 'Bagel',
         price: 7.99,
         variant: 'Vegi Supreme',
@@ -68,26 +77,152 @@ describe('Basket', () => {
         name: 'Bagel',
         price: 8.99,
         variant: 'NYC Deli',
-        quantity: 2
-      },
+        quantity: 1
+      }
+    ]
+
+    const itemToRemove = {
+      name: 'Bagel',
+      price: 7.99,
+      variant: 'Vegi Supreme',
+      quantity: 1
+    }
+
+    const expectedResult = [
       {
         name: 'Bagel',
-        price: 11.99,
-        variant: 'All Day Breakfast',
-        quantity: 5
-      })
+        price: 8.99,
+        variant: 'NYC Deli',
+        quantity: 1
+      }
     ]
-    const expectedResult = []
+
     // execute
-    const updatedBasket = basket.removeFromBasket()
+    basket.addMultipleToBasket(itemsToAdd)
+    const updatedBasket = basket.removeFromBasket(itemToRemove)
+    // console.log('new basket', updatedBasket)
+
     // verify
     expect(updatedBasket).toEqual(expectedResult)
   })
-})
 
-// it("Adult can leave when adults 2 and children 1", function() {
-//   let softPlay = new SoftPlay()
-//   softPlay.enter(2,1)
-//   expect(softPlay.leave(1,0)).toBeTrue()
-//   expect(softPlay.occupancy()).toEqual({adults: 1, children: 1})
-// })
+  /* Part 2-1 DONE
+  As a member of the public,
+  So that I can not overfill my small bagel basket
+  I'd like to know when my basket is full when I try adding an item beyond my basket capacity. */
+  it('Customer - your basket is full', () => {
+    const basket = new Basket()
+
+    const itemsToAdd = [
+      {
+        name: 'Bagel',
+        price: 7.99,
+        variant: 'Vegi Supreme',
+        quantity: 1
+      },
+      {
+        name: 'Bagel',
+        price: 8.99,
+        variant: 'NYC Deli',
+        quantity: 1
+      },
+      {
+        name: 'Bagel',
+        price: 9.99,
+        variant: 'Oxford Blue',
+        quantity: 1
+      },
+      {
+        name: 'Bagel',
+        price: 15.99,
+        variant: 'Everything Everywhere All At Once',
+        quantity: 1
+      }
+    ]
+
+    const expectedResult = [
+      {
+        name: 'Bagel',
+        price: 7.99,
+        variant: 'Vegi Supreme',
+        quantity: 1
+      },
+      {
+        name: 'Bagel',
+        price: 8.99,
+        variant: 'NYC Deli',
+        quantity: 1
+      },
+      {
+        name: 'Bagel',
+        price: 9.99,
+        variant: 'Oxford Blue',
+        quantity: 1
+      }
+    ]
+
+    // execute
+    const updatedBasket = basket.addMultipleToBasket(itemsToAdd)
+    // console.log("updated basket=", updatedBasket);
+
+    // verify
+    expect(updatedBasket).toEqual(expectedResult)
+  })
+
+  /* Part 2-2 DONE
+  As a Bob's Bagels manager,
+  So that I can record more sales
+  I’d like to create baskets with larger capacity when I need to. */
+  it('Manager - increase basket capacity', () => {
+    const basket = new Basket()
+    const expectedResult = 5
+    // execute
+    const updatedBasket = basket.increaseBasketMax(2) // Passes (2) into the function in basket.js
+    // verify
+    expect(updatedBasket).toEqual(expectedResult)
+  })
+
+  /* Part 2-3 DONE
+  As a member of the public
+  So that I can maintain my sanity
+  I'd like to know if I try to remove an item that doesn't exist in my basket. */
+  it('Customer - Item is not in my basket', () => {
+    const basket = new Basket()
+
+    const itemsToAdd = [
+      {
+        name: 'Bagel',
+        price: 7.99,
+        variant: 'Vegi Supreme',
+        quantity: 1
+      },
+      {
+        name: 'Bagel',
+        price: 8.99,
+        variant: 'NYC Deli',
+        quantity: 1
+      }
+    ]
+
+    const itemToRemove = {
+      name: 'Bagel',
+      price: 9.99,
+      variant: 'Oxford Blue',
+      quantity: 1
+    }
+
+    const expectedResult = 'This item is not in your basket!'
+
+    // execute
+    basket.addMultipleToBasket(itemsToAdd)
+    const updatedBasket = basket.itemNotInBasket(itemToRemove)
+
+    // verify
+    expect(updatedBasket).toEqual(expectedResult)
+  })
+
+  /* Part 3-1
+  As a member of the public,
+  So that I can know how much my bagels are,
+  I’d like to see the price of each item before I add it to my basket. */
+})
