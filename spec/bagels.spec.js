@@ -10,41 +10,17 @@ describe('Basket', () => {
   it('Customer - adds an item to the basket', () => {
     // Add item is an Array due to the [], the {} inside are Objects
     const basket = new Basket()
-    const itemToAdd = [
-      {
-        name: 'Bagel',
-        price: 7.99,
-        variant: 'Vegi Supreme',
-        quantity: 1
-      },
+    console.log('Basket', basket)
+    const itemToAdd = {
+      name: 'Bagel',
+      price: 7.99,
+      variant: 'Vegi Supreme',
+      quantity: 1
+    }
 
-      {
-        name: 'Bagel',
-        price: 8.99,
-        variant: 'NYC Deli',
-        quantity: 2
-      },
-
-      {
-        name: 'Bagel',
-        price: 11.99,
-        variant: 'All Day Breakfast',
-        quantity: 5
-      }
-    ]
-
-    const expectedResult = [itemToAdd]
-    const updatedBasket = basket.addToBasket(itemToAdd)
-    expect(updatedBasket).toEqual(expectedResult)
-  })
-
-  it("Customer - doesn't add item if there is no item", () => {
-    const basket = new Basket()
-    const expectedResult = []
-    // execute
-    const updatedBasket = basket.addToBasket()
-    // verify
-    expect(updatedBasket).toEqual(expectedResult)
+    const expectedResult = 1
+    basket.addToBasket(itemToAdd)
+    expect(basket.items.length).toEqual(expectedResult)
   })
 
   /* Part 1-2 DONE
@@ -87,11 +63,11 @@ describe('Basket', () => {
 
     // execute
     basket.addMultipleToBasket(itemsToAdd)
-    const updatedBasket = basket.removeFromBasket(itemToRemove)
-    // console.log('new basket', updatedBasket)
+    basket.removeFromBasket(itemToRemove)
+    // console.log('new basket', basket.items)
 
     // verify
-    expect(updatedBasket).toEqual(expectedResult)
+    expect(basket.items).toEqual(expectedResult)
   })
 
   /* Part 2-1 DONE
@@ -150,11 +126,11 @@ describe('Basket', () => {
     ]
 
     // execute
-    const updatedBasket = basket.addMultipleToBasket(itemsToAdd)
-    // console.log("updated basket=", updatedBasket);
+    basket.addMultipleToBasket(itemsToAdd)
+    // console.log("updated basket=", basket.items);
 
     // verify
-    expect(updatedBasket).toEqual(expectedResult)
+    expect(basket.items).toEqual(expectedResult)
   })
 
   /* Part 2-2 DONE
@@ -165,9 +141,9 @@ describe('Basket', () => {
     const basket = new Basket()
     const expectedResult = 5
     // execute
-    const updatedBasket = basket.increaseBasketMax(2) // Passes (2) into the function in basket.js
+    basket.increaseBasketMax(2) // Passes (2) into the function in basket.js
     // verify
-    expect(updatedBasket).toEqual(expectedResult)
+    expect(basket.max).toEqual(expectedResult)
   })
 
   /* Part 2-3 DONE
@@ -199,14 +175,13 @@ describe('Basket', () => {
       quantity: 1
     }
 
-    const expectedResult = 'This item is not in your basket!'
-
     // execute
     basket.addMultipleToBasket(itemsToAdd)
-    const updatedBasket = basket.itemNotInBasket(itemToRemove)
+    expect(basket.items.length).toEqual(2)
+    basket.removeFromBasket(itemToRemove)
 
     // verify
-    expect(updatedBasket).toEqual(expectedResult)
+    expect(basket.items.length).toEqual(2)
   })
 
   /* Part 3-1 DONE
@@ -215,19 +190,19 @@ describe('Basket', () => {
   I’d like to see the price of each item before I add it to my basket. */
   it('Customer - check item price before adding it to my basket', () => {
     const basket = new Basket()
-    const itemToAdd = {
+    const itemToCheck = {
       name: 'Bagel',
       price: 7.99,
       variant: 'Vegi Supreme'
     }
 
-    const expectedResult = [7.99]
-    const updatedBasket = basket.priceChecker(itemToAdd.price)
-    expect(updatedBasket).toEqual(expectedResult)
+    const expectedResult = 7.99
+    const itemPrice = basket.getPrice(itemToCheck)
+    expect(itemPrice).toEqual(expectedResult)
   })
 
   /*
-Part 3-2
+Part 3-2 DONE
 As a member of the public
 So that I can buy many of my favorite bagel
 I'd like to be able to add the same type of bagel to my basket more than once */
@@ -235,20 +210,12 @@ I'd like to be able to add the same type of bagel to my basket more than once */
   it('Customer - allow me to add multiple of my favorite bagel', () => {
     const basket = new Basket()
 
-    const itemsToAdd = [
-      {
-        name: 'Bagel',
-        price: 7.99,
-        variant: 'Vegi Supreme',
-        quantity: 1
-      },
-      {
-        name: 'Bagel',
-        price: 7.99,
-        variant: 'Vegi Supreme',
-        quantity: 1
-      }
-    ]
+    const item = {
+      name: 'Bagel',
+      price: 7.99,
+      variant: 'Vegi Supreme',
+      quantity: 1
+    }
 
     const expectedResult = [
       {
@@ -260,11 +227,13 @@ I'd like to be able to add the same type of bagel to my basket more than once */
     ]
 
     // execute
-    const updatedBasket = basket.addMultipleToBasket(itemsToAdd)
-    // console.log("updated basket=", updatedBasket);
+    basket.addToBasket(item)
+    basket.addToBasket(item)
+
+    console.log('updated basket', basket.items)
 
     // verify
-    expect(updatedBasket).toEqual(expectedResult)
+    expect(basket.items).toEqual(expectedResult)
   })
 
   /*
@@ -300,10 +269,10 @@ When I go to checkout I'd like to know the total sum of the bagels in my basket 
     const expectedResult = 32.97
 
     // execute
-    const updatedBasket = basket.totalPrice()
-    // console.log("updated basket=", updatedBasket);
+    const total = basket.getTotal()
+    // console.log("updated basket=", basket.items);
 
     // verify
-    expect(updatedBasket).toEqual(expectedResult)
+    expect(total).toEqual(expectedResult)
   })
 })
